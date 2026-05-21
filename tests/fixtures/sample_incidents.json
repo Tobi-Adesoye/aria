@@ -1,0 +1,46 @@
+[
+  {
+    "number": "INC0000001",
+    "caller_id": "John Smith",
+    "short_description": "HDFS DataNode disk full on cdp-worker-03",
+    "description": "DataNode cdp-worker-03 is reporting disk usage at 98%. Write operations are failing with DiskOutOfSpaceException. Affected directory: /data/hdfs/dn/current.",
+    "priority": "P1",
+    "state": "New",
+    "cmdb_ci": "cdp-worker-03",
+    "assignment_group": "Data Platform OPS",
+    "opened_at": "2026-04-16T02:14:00"
+  },
+  {
+    "number": "INC0000002",
+    "caller_id": "Alice Dupont",
+    "short_description": "Spark executor OOM on databricks-cluster-07",
+    "description": "Spark job analytics_etl_daily is failing with java.lang.OutOfMemoryError: GC overhead limit exceeded on executor nodes of cluster databricks-cluster-07.",
+    "priority": "P2",
+    "state": "New",
+    "cmdb_ci": "databricks-cluster-07",
+    "assignment_group": "Data Platform OPS",
+    "opened_at": "2026-04-16T03:45:00"
+  },
+  {
+    "number": "INC0000003",
+    "caller_id": "Mohamed Raji",
+    "short_description": "Oracle DB listener down on ora-prod-01",
+    "description": "TNS listener on ora-prod-01 is not responding. Connection attempts from application servers are timing out with ORA-12541: TNS no listener.",
+    "priority": "P1",
+    "state": "New",
+    "cmdb_ci": "ora-prod-01",
+    "assignment_group": "Database OPS",
+    "opened_at": "2026-04-16T04:30:00"
+  },
+  {
+    "number": "INC0000004",
+    "caller_id": "Sara Kowalski",
+    "short_description": "Something broken in the data pipeline again",
+    "description": "The nightly job did not complete. I checked and there are errors somewhere in the processing cluster. Last time this happened it was memory related on the spark nodes.",
+    "priority": "P2",
+    "state": "New",
+    "cmdb_ci": "",
+    "assignment_group": "Data Platform OPS",
+    "opened_at": "2026-04-16T06:00:00"
+  }
+]

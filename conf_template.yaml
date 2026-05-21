@@ -1,0 +1,43 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# ARIA — Configuration template
+# Copy this file to conf.yaml and fill in your values. Never commit conf.yaml.
+#
+# conf.yaml holds non-secret runtime configuration. Actual secrets (passwords,
+# API keys, tokens, SSH keys) belong in .env / your secrets manager.
+#
+# NOTE: The codebase currently reads configuration from environment variables.
+# conf.yaml defines the target configuration model. Code integration (replacing
+# env var reads with conf.yaml reads) is a pre-S6 task.
+# ──────────────────────────────────────────────────────────────────────────────
+
+servicenow:
+  instance: <your-instance>.service-now.com   # e.g. dev12345.service-now.com
+  user: <your-service-account>                # ServiceNow service account username
+  assignment_group: <your-assignment-group>   # e.g. "Data Platform OPS"
+  cmdb_rel_type: "Members::Member of"         # override if your instance uses a different type
+
+llm:
+  mode: modular             # modular | global
+  global_model: ""          # used only when mode=global, e.g. claude-sonnet-4-6
+  agents:
+    agent1: <model-id>      # e.g. claude-sonnet-4-6
+    agent2: ""              # optional — enables LLM query planning in Agent 2
+    agent3: <model-id>
+    agent4: ""              # optional — unused in Phase 1; activates Phase 2 response interpretation
+
+connectors:
+  log: memory               # memory | gcp
+  queue: memory             # memory (only option in Phase 1)
+  state_store: memory       # memory (only option in Phase 1)
+
+gcp:                        # only required when connectors.log = gcp
+  project_id: <your-gcp-project-id>
+  region: <your-gcp-region>
+  gcs_bucket_logs: <your-gcs-bucket-name>
+  bq_log_dataset: <your-bigquery-dataset>
+
+cdp:
+  ssh_user: hadoop           # OS user with read access to /var/log/hadoop-*
+
+slack:
+  channel_id: <your-slack-channel-id>   # channel where Agent 4 posts notifications

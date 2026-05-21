@@ -1,0 +1,11 @@
+{"host": "cdp-worker-03", "timestamp": "2026-04-16T01:55:00", "level": "WARN", "message": "DataNode disk usage at 85% on /data/hdfs/dn/current", "source": "hdfs-datanode"}
+{"host": "cdp-worker-03", "timestamp": "2026-04-16T02:05:00", "level": "WARN", "message": "DataNode disk usage at 92% on /data/hdfs/dn/current", "source": "hdfs-datanode"}
+{"host": "cdp-worker-03", "timestamp": "2026-04-16T02:12:00", "level": "ERROR", "message": "DiskOutOfSpaceException: No space left on /data/hdfs/dn/current (usage: 98%)", "source": "hdfs-datanode"}
+{"host": "cdp-worker-03", "timestamp": "2026-04-16T02:13:00", "level": "ERROR", "message": "Failed to write block blk_1234567890 to disk: DiskOutOfSpaceException", "source": "hdfs-datanode"}
+{"host": "cdp-worker-03", "timestamp": "2026-04-16T02:14:00", "level": "ERROR", "message": "DataNode shutting down due to disk failure", "source": "hdfs-datanode"}
+{"host": "databricks-cluster-07", "timestamp": "2026-04-16T03:30:00", "level": "INFO", "message": "Executor 4 starting on node worker-07-b", "source": "spark-executor"}
+{"host": "databricks-cluster-07", "timestamp": "2026-04-16T03:40:00", "level": "WARN", "message": "GC overhead: 82% of CPU time spent in garbage collection", "source": "spark-executor"}
+{"host": "databricks-cluster-07", "timestamp": "2026-04-16T03:44:00", "level": "ERROR", "message": "java.lang.OutOfMemoryError: GC overhead limit exceeded on executor 4", "source": "spark-executor"}
+{"host": "databricks-cluster-07", "timestamp": "2026-04-16T03:45:00", "level": "ERROR", "message": "Executor 4 lost — java.lang.OutOfMemoryError: Java heap space", "source": "spark-driver"}
+{"host": "ora-prod-01", "timestamp": "2026-04-16T04:25:00", "level": "ERROR", "message": "TNS-12541: TNS no listener — listener process not running", "source": "oracle-listener"}
+{"host": "ora-prod-01", "timestamp": "2026-04-16T04:28:00", "level": "ERROR", "message": "ORA-12541: TNS no listener on (HOST=ora-prod-01)(PORT=1521)", "source": "oracle-client"}

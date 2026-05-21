@@ -1,0 +1,51 @@
+site_name: ARIA Documentation
+site_description: Automated Root-cause & Incident Analysis — Architecture and Developer Guide
+repo_url: https://github.com/aria-aiops/aria
+repo_name: aria-aiops/aria
+docs_dir: documentation
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Architecture:
+      - Overview: architecture/overview.md
+      - Agents: architecture/agents.md
+      - Interfaces & Plugins: architecture/interfaces.md
+      - Data Models: architecture/data-models.md
+  - Guides:
+      - Getting Started: guides/getting-started.md
+      - Adding a Connector: guides/adding-a-connector.md

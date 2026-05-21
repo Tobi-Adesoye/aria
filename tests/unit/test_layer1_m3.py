@@ -1,0 +1,154 @@
+"""Unit tests for M3 Layer 1: VaultInterface, IncidentMetadata extensions, KnowledgeBaseInterface.
+
+ARI-43 · ARI-44 · ARI-58
+"""
+
+import os
+from datetime import datetime
+
+import pytest
+
+from core.exceptions import KnowledgeBaseError, VaultSecretNotFoundError
+from core.interfaces.knowledge_base import KnowledgeBaseInterface
+from core.interfaces.vault import VaultInterface
+from core.models import (
+    AffectedResource,
+    CIClass,
+    IncidentMetadata,
+    LogAccessHint,
+    PlatformTag,
+    Priority,
+)
+from implementations.vault.envvar import EnvVarVault
+
+# ── ARI-43: EnvVarVault ──────────────────────────────────────────────────────
+
+
+class TestEnvVarVault:
+    def test_get_secret_returns_value_when_env_var_set(self, monkeypatch):
+        monkeypatch.setenv("MY_SECRET", "s3cr3t")
+        vault = EnvVarVault()
+        assert vault.get_secret("MY_SECRET") == "s3cr3t"
+
+    def test_get_secret_raises_when_env_var_missing(self):
+        vault = EnvVarVault()
+        with pytest.raises(VaultSecretNotFoundError, match="NOT_EXISTING"):
+            vault.get_secret("NOT_EXISTING")
+
+    def test_get_secret_with_prefix(self, monkeypatch):
+        monkeypatch.setenv("ARIA_CDP_SSH_KEY", "my-key")
+        vault = EnvVarVault(prefix="ARIA_")
+        assert vault.get_secret("CDP_SSH_KEY") == "my-key"
+
+    def test_prefix_miss_raises_not_found(self, monkeypatch):
+        monkeypatch.setenv("CDP_SSH_KEY", "my-key")
+        vault = EnvVarVault(prefix="ARIA_")
+        with pytest.raises(VaultSecretNotFoundError):
+            vault.get_secret("CDP_SSH_KEY")
+
+    def test_implements_vault_interface(self):
+        assert isinstance(EnvVarVault(), VaultInterface)
+
+
+# ── ARI-44: IncidentMetadata extensions ─────────────────────────────────────
+
+
+class TestIncidentMetadataExtensions:
+    def _make_incident(self, **kwargs) -> IncidentMetadata:
+        defaults = dict(
+            incident_number="INC001",
+            caller="jdoe",
+            short_description="Disk full",
+            long_description="Disk full on node01",
+            priority=Priority.P2,
+            state="New",
+            affected_ci="cdp-cluster-01",
+            assigned_group="OPS",
+            opened_at=datetime(2026, 4, 28, 10, 0, 0),
+        )
+        defaults.update(kwargs)
+        return IncidentMetadata(**defaults)
+
+    def test_defaults_to_no_ci_class(self):
+        inc = self._make_incident()
+        assert inc.ci_class is None
+
+    def test_defaults_to_empty_affected_resources(self):
+        inc = self._make_incident()
+        assert inc.affected_resources == []
+
+    def test_defaults_affected_ci_ip_to_none(self):
+        inc = self._make_incident()
+        assert inc.affected_ci_ip is None
+
+    def test_ci_class_can_be_set_to_cluster(self):
+        inc = self._make_incident(ci_class=CIClass.CLUSTER)
+        assert inc.ci_class == CIClass.CLUSTER
+
+    def test_ci_class_can_be_set_to_service(self):
+        inc = self._make_incident(ci_class=CIClass.SERVICE)
+        assert inc.ci_class == CIClass.SERVICE
+
+    def test_affected_resources_accepts_list(self):
+        resources = [AffectedResource("datanode-01", "10.0.0.1"), AffectedResource("datanode-02")]
+        inc = self._make_incident(affected_resources=resources)
+        assert inc.affected_resources == resources
+
+    def test_ci_class_enum_values(self):
+        assert CIClass.SERVICE == "service"
+        assert CIClass.NODE == "node"
+        assert CIClass.CLUSTER == "cluster"
+        assert CIClass.UNKNOWN == "unknown"
+
+
+# ── ARI-58: LogAccessHint model ──────────────────────────────────────────────
+
+
+class TestLogAccessHint:
+    def test_construction_with_required_fields(self):
+        hint = LogAccessHint(
+            platform_tag=PlatformTag.CDP,
+            log_paths=["/var/log/hadoop/yarn.log"],
+            keywords=["ERROR", "OutOfMemory"],
+        )
+        assert hint.platform_tag == PlatformTag.CDP
+        assert hint.log_paths == ["/var/log/hadoop/yarn.log"]
+        assert hint.keywords == ["ERROR", "OutOfMemory"]
+
+    def test_aggregator_endpoint_defaults_to_none(self):
+        hint = LogAccessHint(
+            platform_tag=PlatformTag.GCP,
+            log_paths=[],
+            keywords=[],
+        )
+        assert hint.aggregator_endpoint is None
+
+    def test_confidence_defaults_to_zero(self):
+        hint = LogAccessHint(
+            platform_tag=PlatformTag.CDP,
+            log_paths=[],
+            keywords=[],
+        )
+        assert hint.confidence == 0.0
+
+    def test_full_construction(self):
+        hint = LogAccessHint(
+            platform_tag=PlatformTag.GCP,
+            log_paths=["projects/my-proj/logs/cloudrun"],
+            keywords=["CRITICAL"],
+            aggregator_endpoint="https://splunk.internal",
+            confidence=0.85,
+        )
+        assert hint.aggregator_endpoint == "https://splunk.internal"
+        assert hint.confidence == 0.85
+
+
+# ── ARI-58: KnowledgeBaseInterface contract ──────────────────────────────────
+
+
+class TestKnowledgeBaseInterfaceContract:
+    """Verify the ABC cannot be instantiated directly."""
+
+    def test_cannot_instantiate_abc(self):
+        with pytest.raises(TypeError):
+            KnowledgeBaseInterface()  # type: ignore[abstract]

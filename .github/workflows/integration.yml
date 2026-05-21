@@ -1,0 +1,50 @@
+name: Integration tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Test suite to run"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - servicenow
+          - logs
+          - classifier
+          - notifier
+          - pipeline
+
+jobs:
+  integration:
+    name: Integration tests (${{ github.event.inputs.suite }})
+    runs-on: ubuntu-latest
+    environment: integration
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: pytest (integration)
+        env:
+          SNOW_INSTANCE: ${{ secrets.SNOW_INSTANCE }}
+          SNOW_USER: ${{ secrets.SNOW_USER }}
+          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ARIA_AGENT1_MODEL: ${{ vars.ARIA_AGENT1_MODEL }}
+          ARIA_AGENT3_MODEL: ${{ vars.ARIA_AGENT3_MODEL }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+          if [ "${{ github.event.inputs.suite }}" = "all" ]; then
+            pytest tests/integration/ -v
+          else
+            pytest tests/integration/ -v -k "${{ github.event.inputs.suite }}"
+          fi

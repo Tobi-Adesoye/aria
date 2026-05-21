@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.dev
+*.env.local
+
+# Configuration (non-secret runtime config — see conf_template.yaml)
+conf.yaml
+
+# Internal tooling
+.claude/
+.infisical.json
+
+# Internal docs (roadmap, specs — not part of public source)
+.docs/
+
+# License (pending finalisation)
+LICENSE
+
+# Backup / scratch files
+*_v1backup.md
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MkDocs build output
+site/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

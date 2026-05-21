@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+markers = [
+    "integration: marks tests that require real external services (deselect with '-m not integration')",
+]
